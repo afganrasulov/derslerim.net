@@ -1,10 +1,17 @@
----
-{"dg-publish":true,"permalink":"/test-delete-after/hello/","tags":["gardenEntry"]}
----
-
 <script>
   async function authenticateUser() {
     try {
+      // Daha önce localStorage'da e-posta var mı ve hala geçerli mi?
+      const savedEmail = localStorage.getItem("userEmail");
+      const expirationTime = localStorage.getItem("expirationTime");
+
+      // Eğer e-posta kayıtlıysa ve 24 saat geçmemişse, giriş tekrar istenmez
+      if (savedEmail && expirationTime && new Date().getTime() < expirationTime) {
+        alert("Erişim izni verildi! Tekrar giriş yapmanız gerekmiyor.");
+        return;
+      }
+
+      // Yeni e-posta girişini al
       const email = prompt("Lütfen e-posta adresinizi girin:");
       if (!email) {
         alert("E-posta girmeden devam edemezsiniz!");
@@ -20,6 +27,10 @@
 
       const result = await response.text();
       if (result.trim() === "authorized") {
+        // Erişim izni verildiğinde e-posta ve geçerlilik süresini kaydet
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("expirationTime", new Date().getTime() + 24 * 60 * 60 * 1000); // 24 saat
+
         alert("Erişim izni verildi!");
       } else if (result.trim() === "already_logged_in") {
         alert("Bu e-posta ile zaten başka bir oturum açık!");
@@ -36,9 +47,9 @@
   }
 
   async function logoutUser() {
-    const email = prompt("Çıkış yapmak istediğiniz e-posta adresini girin:");
+    const email = localStorage.getItem("userEmail");
     if (!email) {
-      alert("E-posta adresi girmelisiniz!");
+      alert("Zaten çıkış yapmışsınız veya oturumunuz yok.");
       return;
     }
 
@@ -49,6 +60,8 @@
     const result = await response.text();
     if (result.trim() === "logged_out") {
       alert("Başarıyla çıkış yaptınız!");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("expirationTime");
       window.location.href = "/";
     } else {
       alert("Çıkış işlemi başarısız!");
