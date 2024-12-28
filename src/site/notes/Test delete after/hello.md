@@ -22,7 +22,7 @@
       if (result.trim() === "authorized") {
         alert("Erişim izni verildi!");
       } else if (result.trim() === "already_logged_in") {
-        alert("Bu e-posta ile zaten giriş yapılmış!");
+        alert("Bu e-posta ile zaten başka bir oturum açık!");
         window.location.href = "/";
       } else {
         alert("Erişim reddedildi! Ana sayfaya yönlendiriliyorsunuz.");
