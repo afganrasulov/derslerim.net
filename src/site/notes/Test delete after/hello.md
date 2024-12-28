@@ -1,3 +1,7 @@
+---
+{"dg-publish":true,"permalink":"/test-delete-after/hello/","tags":["gardenEntry"]}
+---
+
 <script>
   async function authenticateUser() {
     try {
